@@ -8,7 +8,7 @@ import requests
 import time
 
 
-BASE_URL	    = "http://pornhub.com"
+BASE_URL	= "http://pornhub.com"
 HEADERS         = { "Content-Type" : "text/html; charset=UTF-8" }
 PHOTO_EXT       = ".jpg"                                                    # for validation
 
@@ -17,11 +17,11 @@ PORNSTAR_URL	= "/pornstar/"                                              # for v
 PORNSTAR_PHOTO	= "image.pornhub.phncdn.com/pics/pornstars/"                # for validation
 
 VIDEOS_URL      = "/video/search?"
-VIDEO_URL	    = "/view_video.php?viewkey="                                # for validation
+VIDEO_URL	= "/view_video.php?viewkey="                                # for validation
 VIDEO_IMAGE_URL = "image.pornhub.phncdn.com/videos/"                        # for validation
 
 ALBUMS_URL      = "/albums/"
-ALBUM_URL	    = "/album/show_album?id="                                   # for validation
+ALBUM_URL	= "/album/show_album?id="                                   # for validation
 ALBUM_PHOTO_URL = "image.pornhub.phncdn.com/pics/albums/"                   # for validation
 PHOTO_PREVIEW   = "/photo/"                                                 # for validation
 
