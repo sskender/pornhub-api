@@ -3,20 +3,20 @@ Unofficial API for pornhub.com in Python
 
 ## Usage
 
-Create client
+#### Create client
 ```python
 import pornhub
 client = pornhub.PornHub()
 ```
 
-Grab stars
+#### Grab stars
 ```python
 for star in client.getStars(10):
     print star
     print star["name"]
 ```
 
-Create client with search keywords
+#### Create client with search keywords
 ```python
 keywords = ["word1", "word2"]
 client = pornhub.PornHub(keywords)
