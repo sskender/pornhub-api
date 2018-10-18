@@ -36,6 +36,7 @@ class Stars(object):
                 url = a_tag.attrs["href"]
                 if isStar(url):
                     data["url"] = BASE_URL + url
+                    data["name"] = a_tag.attrs["data-mxptext"]
                     break
             except Exception as e:
                 pass
@@ -43,10 +44,9 @@ class Stars(object):
         # scrap name and photo url
         for img_tag in li_el.find_all("img", src=True):
             try:
-                photo_url = img_tag.attrs["src"]
+                photo_url = img_tag.attrs["data-thumb_url"]
                 if isStarPhoto(photo_url):
                     data["photo"] = photo_url
-                    data["name"] = img_tag.attrs["alt"]
                     break
             except Exception as e:
                 pass

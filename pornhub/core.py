@@ -1,24 +1,28 @@
 # -*- coding: UTF-8 -*-
 
 from bs4 import BeautifulSoup
-from urllib import urlencode
 from threading import Thread
 from queue import Queue
 import requests
 import time
+try:
+    from urllib import urlencode
+except ImportError:
+    # For support Python 3
+    from urllib.parse import urlencode
 
 
-BASE_URL	= "http://pornhub.com"
+BASE_URL	= "https://pornhub.com"
 HEADERS         = { "Content-Type" : "text/html; charset=UTF-8" }
 PHOTO_EXT       = ".jpg"                                                    # for validation
 
 PORNSTARS_URL	= "/pornstars"
 PORNSTAR_URL	= "/pornstar/"                                              # for validation
-PORNSTAR_PHOTO	= "image.pornhub.phncdn.com/pics/pornstars/"                # for validation
+PORNSTAR_PHOTO	= ".phncdn.com/pics/pornstars/"                # for validation
 
 VIDEOS_URL      = "/video/search?"
 VIDEO_URL	= "/view_video.php?viewkey="                                # for validation
-VIDEO_IMAGE_URL = "image.pornhub.phncdn.com/videos/"                        # for validation
+VIDEO_IMAGE_URL = ".phncdn.com/videos/"                        # for validation
 
 ALBUMS_URL      = "/albums/"
 ALBUM_URL	= "/album/show_album?id="                                   # for validation
@@ -46,7 +50,7 @@ def isPhotoPreview(url):
 def isPhoto(url):
     """
     Validate photo full url
-    i1.cdn2b.image.pornhub.phncdn.com/pics/albums/SOMENUMBERS/SOMETEXT.jpg
+    .pornhub.phncdn.com/pics/albums/SOMENUMBERS/SOMETEXT.jpg
     """
     return True if (ALBUM_PHOTO_URL in url) and (url[-4:] == PHOTO_EXT) else False
 
@@ -74,6 +78,6 @@ def isVideo(url):
 def isVideoPhoto(url):
     """
     Validate video background photo
-    i0.cdn2b.image.pornhub.phncdn.com/videos/SOMENUMBERS/SOMETEXT.jpg
+    .pornhub.phncdn.com/videos/SOMENUMBERS/SOMETEXT.jpg
     """
     return True if (VIDEO_IMAGE_URL in url) and (url[-4:] == PHOTO_EXT) else False
