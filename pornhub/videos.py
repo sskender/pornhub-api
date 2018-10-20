@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from .core import *
+import re
 
 class Videos(object):
     
@@ -32,7 +33,7 @@ class Videos(object):
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiVideos(self, soup_data):
-        return soup_data.find_all("li", { "class" : "videoblock videoBox" } )
+        return soup_data.find_all("li", { "class" : re.compile(".*videoblock videoBox.*") } )
 
     def _scrapVideoInfo(self, div_el):
         data = {
@@ -57,7 +58,7 @@ class Videos(object):
         # scrap background photo url
         for img_tag in div_el.find_all("img", src=True):
             try:
-                url = img_tag.attrs["data-mediumthumb"]
+                url = img_tag.attrs["data-thumb_url"]
                 if isVideoPhoto(url):
                     data["background"] = url
                     break
