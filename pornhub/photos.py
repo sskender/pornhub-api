@@ -4,7 +4,7 @@ from .core import *
 
 class Photos(object):
     
-    def __init__(self, ProxyDictionary, keywords=[]):
+    def __init__(self, ProxyDictionary, keywords=[], *args):
         self.keywords = keywords
         self.ProxyDictionary = ProxyDictionary
         self.photos_queue = Queue()
