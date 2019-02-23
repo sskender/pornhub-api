@@ -4,8 +4,9 @@ from .core import *
 
 class Photos(object):
     
-    def __init__(self, keywords=[], *args):
+    def __init__(self, ProxyDictionary, keywords=[]):
         self.keywords = keywords
+        self.ProxyDictionary = ProxyDictionary
         self.photos_queue = Queue()
 
     def _loadAlbumsPage(self, page_num):
@@ -31,7 +32,7 @@ class Photos(object):
                 payload["search"] += (item + " ")
 
         search_url = BASE_URL + ALBUMS_URL + "-".join(categories) + "?"
-        r = requests.get(search_url, params=payload, headers=HEADERS)
+        r = requests.get(search_url, params=payload, headers=HEADERS, proxies=self.ProxyDictionary)
         html = r.text
 
         return BeautifulSoup(html, "lxml")
@@ -50,7 +51,7 @@ class Photos(object):
         return albums_url
 
     def _scrapPhotoFullURL(self, preview_url):
-        r = requests.get(preview_url, headers=HEADERS)
+        r = requests.get(preview_url, headers=HEADERS, proxies=self.ProxyDictionary)
         html = r.text
         soup = BeautifulSoup(html, "lxml")
 
@@ -62,7 +63,7 @@ class Photos(object):
         return False
         
     def _scrapAlbumPhotos(self, album_url):
-        r = requests.get(album_url, headers=HEADERS)
+        r = requests.get(album_url, headers=HEADERS, proxies=self.ProxyDictionary)
         html = r.text
         soup = BeautifulSoup(html, "lxml")
 
@@ -71,7 +72,7 @@ class Photos(object):
                 preview_url = possible_image.attrs["href"]
                 if isPhotoPreview(preview_url):
                     yield (BASE_URL + preview_url)
-            except Exception as e:
+            except Exception as E:
                 pass
 
     def getPhotos(self, quantity = 1, page = 1, infinity = False):

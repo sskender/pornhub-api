@@ -4,12 +4,12 @@ from .core import *
 
 class Stars(object):
 
-    def __init__(self, *args):
-        pass
+    def __init__(self, ProxyDictionary, *args):
+        self.ProxyDictionary = ProxyDictionary
 
     def _loadStarsPage(self, page_num):
         payload = { "page" : page_num }
-        r = requests.get(BASE_URL + PORNSTARS_URL, params=payload, headers=HEADERS)
+        r = requests.get(BASE_URL + PORNSTARS_URL, params=payload, headers=HEADERS, proxies=self.ProxyDictionary)
         html = r.text
 
         return BeautifulSoup(html, "lxml")
