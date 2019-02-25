@@ -9,6 +9,13 @@ import pornhub
 client = pornhub.PornHub()
 ```
 
+#### Create client with proxy 
+```python
+import pornhub
+client = pornhub.PornHub("5.135.164.72", 3128)
+#With proxy, given a Proxy IP and Port. For the countries with restricted access like Turkey, etc.
+```
+
 #### Grab stars
 ```python
 for star in client.getStars(10):

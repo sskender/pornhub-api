@@ -5,8 +5,9 @@ import re
 
 class Videos(object):
     
-    def __init__(self, keywords=[], *args):
+    def __init__(self, ProxyDictionary, keywords=[], *args):
         self.keywords = keywords
+        self.ProxyDictionary = ProxyDictionary
 
     def _craftVideoURL(self, page_num):
         # url example:
@@ -27,7 +28,7 @@ class Videos(object):
         return payload
 
     def _loadVideosPage(self, page_num):
-        r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS)
+        r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
         html = r.text
 
         return BeautifulSoup(html, "lxml")

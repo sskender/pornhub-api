@@ -11,7 +11,6 @@ except ImportError:
     # For support Python 3
     from urllib.parse import urlencode
 
-
 BASE_URL	= "https://pornhub.com"
 HEADERS         = { "Content-Type" : "text/html; charset=UTF-8" }
 PHOTO_EXT       = ".jpg"                                                    # for validation
