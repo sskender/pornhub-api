@@ -2,7 +2,13 @@
 
 Unofficial API for pornhub.com in Python
 
-## Usage
+## Install
+
+```bash
+pip3 install pornhubapi
+```
+
+## How to use
 
 #### Create client
 
