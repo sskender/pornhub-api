@@ -39,6 +39,11 @@ for star in client.getStars(10):
 keywords = ["word1", "word2"]
 client = pornhub.PornHub(keywords)
 
+# if using a proxy
+client = pornhub.PornHub("5.135.164.72", 3128, keywords)
+# or
+client = pornhub.PornHub(ProxyIP="5.135.164.72", ProxyPort=3128, keywords=["word1", "word2"])
+
 for video in client.getVideos(10,page=2):
     print(video)
     print(video["url"])
