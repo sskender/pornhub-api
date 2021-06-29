@@ -24,9 +24,9 @@ VIDEO_URL	= "/view_video.php?viewkey="                                # for vali
 VIDEO_IMAGE_URL = ".phncdn.com/videos/"                        # for validation
 
 ALBUMS_URL      = "/albums/"
-ALBUM_URL	= "/album/show_album?id="                                   # for validation
-ALBUM_PHOTO_URL = "image.pornhub.phncdn.com/pics/albums/"                   # for validation
-PHOTO_PREVIEW   = "/photo/"                                                 # for validation
+ALBUM_URL	    = "/album/"                                     # for validation
+ALBUM_PHOTO_URL = "phncdn.com/pics/albums/"                     # for validation
+PHOTO_PREVIEW   = "/photo/"                                     # for validation
 
 TIME_TO_WAIT    = 3                                                         # wait this amount in seconds before starting new threads
                                                                             # too many request in short time will result in firewall block
