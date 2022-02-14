@@ -2,6 +2,10 @@
 
 Unofficial API for pornhub.com in Python
 
+*Pull requests are welcome!!!*
+
+I find it quite difficult to make time for an active development on this project, so I will be more than happy to merge your pull requests. Thank you all for supporting this project!
+
 ## Install
 
 ```bash
