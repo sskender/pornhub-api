@@ -14,30 +14,31 @@ class Videos(object):
         # pornhub.com/video/search?search=arg1+arg2
         # pornhub.com/video/search?search=arg1+arg2&p=professional
         # pornhub.com/video/search?search=arg1+arg2&p=professional&page=3
+        payload = {"page" : page_num}
 
-        payload = {"search" : "", "page" : page_num}
+        if self.keywords:
+            payload["search"] = ''
 
-        for item in self.keywords:
-            if (item == "professional") or (item == "pro"):
-                payload["p"] = "professional"
-            elif (item == "homemade") or (item == "home"):
-                payload["p"] = "homemade"
-            else:
-                payload["search"] += (item + " ")
+            for item in self.keywords:
+                if (item == "professional") or (item == "pro"):
+                    payload["p"] = "professional"
+                elif (item == "homemade") or (item == "home"):
+                    payload["p"] = "homemade"
+                else:
+                    payload["search"] += (item + " ")
 
-        payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
+            payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
 
         return payload
 
     def _loadVideosPage(self, page_num):
         
         if self.keywords:
+            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+        else:
             r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
-        else: # if there are no search arguments, need to enter the page number like this, otherwise it will always be 1 page
-            r = requests.get(BASE_URL + "/video?page=" + str(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
 
         html = r.text
-
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiVideos(self, soup_data):
