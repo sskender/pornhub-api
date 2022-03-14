@@ -9,12 +9,30 @@ class Videos(object):
         self.keywords = keywords
         self.ProxyDictionary = ProxyDictionary
 
-    def _craftVideoURL(self, page_num):
+    def _sortVideo(self, sort_by):
+        sort_dict = dict()
+
+        if not sort_by:
+            return sort_dict
+        
+        if self.keywords:
+            sort_types = {'recent': 'mr', 'view': 'mv', 'rate': 'tr', 'long': 'lg'}
+        else:
+            sort_types = {'view': 'mv', 'rate': 'tr', 'hot':'ht', 'long': 'lg', 'new': 'cm'}
+        
+        for key in sort_types:
+            if key in sort_by.lower():
+                sort_dict["o"] = sort_types[key]
+                return sort_dict
+        
+        return sort_dict
+
+    def _craftVideoURL(self, page_num, sort_by):
         # url example:
         # pornhub.com/video/search?search=arg1+arg2
         # pornhub.com/video/search?search=arg1+arg2&p=professional
         # pornhub.com/video/search?search=arg1+arg2&p=professional&page=3
-        payload = {"page" : page_num}
+        payload = dict()
 
         if self.keywords:
             payload["search"] = ''
@@ -28,15 +46,21 @@ class Videos(object):
                     payload["search"] += (item + " ")
 
             payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
+        
+        video_sort = self._sortVideo(sort_by)
+        for key in video_sort:
+            payload[key] = video_sort[key]
+        
+        payload['page'] = page_num
 
         return payload
 
-    def _loadVideosPage(self, page_num):
+    def _loadVideosPage(self, page_num, sort_by):
         
         if self.keywords:
-            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideoURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
         else:
-            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
 
         html = r.text
         return BeautifulSoup(html, "lxml")
@@ -93,12 +117,13 @@ class Videos(object):
         # return
         return data if None not in data.values() else False
 
-    def getVideos(self, quantity = 1, page = 1, infinity = False):
+    def getVideos(self, quantity = 1, page = 1, sort_by = None, infinity = False):
         """
         Get videos basic informations.
 
         :param quantity: number of videos to return
         :param page: starting page number
+        :param sort_by: sort type
         :param infinity: never stop downloading
         """
 
@@ -109,7 +134,7 @@ class Videos(object):
         while True:
             first_four_skip = 4  # first 4 elements skip, they are not relevant to the query
             
-            for possible_video in self._scrapLiVideos(self._loadVideosPage(page)):
+            for possible_video in self._scrapLiVideos(self._loadVideosPage(page, sort_by)):
                 if first_four_skip > 0:  # first 4 elements skip , they are not relevant to the query
                     first_four_skip -= 1  # first 4 elements skip , they are not relevant to the query
                 else:

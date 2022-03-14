@@ -15,6 +15,7 @@ BASE_URL	= "https://pornhub.com"
 HEADERS         = { "Content-Type" : "text/html; charset=UTF-8" }
 PHOTO_EXT       = ".jpg"                                                    # for validation
 SEARCH_URL      = "/search"
+
 PORNSTARS_URL	= "/pornstars"
 PORNSTAR_URL	= "/pornstar/"                                              # for validation
 PORNSTAR_PHOTO	= ".phncdn.com/pics/pornstars/"                # for validation

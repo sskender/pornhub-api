@@ -53,6 +53,27 @@ for video in client.getVideos(10,page=2):
     print(video["url"])
 ```
 
+#### Sort Video by parameter
+
+When keywords are set: "view", "rate", "long", "recent" 
+```python
+keywords = ["word1", "word2"]
+client = pornhub.PornHub(keywords=keywords)
+
+for video in client.getVideos(10,page=2, sort_by="long"):
+    print(video)
+    print(video["url"])
+```
+
+When keywords are not set: "view", "rate", "long", "new", "hot"
+```python
+client = pornhub.PornHub()
+
+for video in client.getVideos(10,page=2, sort_by="hot"):
+    print(video)
+    print(video["url"])
+```
+
 ## Contributors
 
 <table>
