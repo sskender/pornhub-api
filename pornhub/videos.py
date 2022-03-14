@@ -25,10 +25,17 @@ class Videos(object):
             else:
                 payload["search"] += (item + " ")
 
+        payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
+
         return payload
 
     def _loadVideosPage(self, page_num):
-        r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+        
+        if self.keywords:
+            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+        else: # if there are no search arguments, need to enter the page number like this, otherwise it will always be 1 page
+            r = requests.get(BASE_URL + "/video?page=" + str(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
+
         html = r.text
 
         return BeautifulSoup(html, "lxml")
