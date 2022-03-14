@@ -41,7 +41,7 @@ for star in client.getStars(10):
 
 ```python
 keywords = ["word1", "word2"]
-client = pornhub.PornHub(keywords)
+client = pornhub.PornHub(keywords=keywords)
 
 # if using a proxy
 client = pornhub.PornHub("5.135.164.72", 3128, keywords)
