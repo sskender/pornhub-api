@@ -106,15 +106,19 @@ class Videos(object):
         found = 0
 
         while True:
-
+            first_four_skip = 4  # first 4 elements skip, they are not relevant to the query
+            
             for possible_video in self._scrapLiVideos(self._loadVideosPage(page)):
-                data_dict = self._scrapVideoInfo(possible_video)
+                if first_four_skip > 0:  # first 4 elements skip , they are not relevant to the query
+                    first_four_skip -= 1  # first 4 elements skip , they are not relevant to the query
+                else:
+                    data_dict = self._scrapVideoInfo(possible_video)
 
-                if data_dict:
-                    yield data_dict
+                    if data_dict:
+                        yield data_dict
 
-                    if not infinity:
-                        found += 1
-                        if found >= quantity: return
+                        if not infinity:
+                            found += 1
+                            if found >= quantity: return
 
             page += 1
