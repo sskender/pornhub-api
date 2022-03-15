@@ -82,14 +82,14 @@ Method **getVideo(url, viewkey)** gives more detail information about a single v
 client = pornhub.PornHub()
 
 # You can input the full video url, like that
-video = client.GetVideo("https://www.pornhub.com/view_video.php?viewkey=SOMEKEY")
+video = client.getVideo("https://www.pornhub.com/view_video.php?viewkey=SOMEKEY")
 # Or that
-video = client.GetVideo(url="https://www.pornhub.com/view_video.php?viewkey=SOMEKEY")
+video = client.getVideo(url="https://www.pornhub.com/view_video.php?viewkey=SOMEKEY")
 # Or input only viewkey, like that
-video = client.GetVideo(viewkey="SOMEKEY")
+video = client.getVideo(viewkey="SOMEKEY")
 
 print(video)
-print(video["url"])
+print(video["title"])
 ```
 
 The method return a dictionary with keywords:
