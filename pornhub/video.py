@@ -43,10 +43,10 @@ class Video(object):
             "duration"          : None,     # string
             "loaded"            : None,     # string
             "upload_date"       : None,     # string
-            "like"              : None,     # string
-            "accurate_like"     : None,     # integer
-            "dislike"           : None,     # string
-            "accurate_dislike"  : None,     # integer
+            "likes"              : None,     # string
+            "accurate_likes"     : None,     # integer
+            "dislikes"           : None,     # string
+            "accurate_dislikes"  : None,     # integer
             "favorite"          : None,     # string
             "author"            : None,     # string
             "pornstars"         : None,     # list
@@ -73,10 +73,10 @@ class Video(object):
         data['views'] = video.find("span", class_="count").text  # Scrap view
         data['rating'] = int(video.find("span", class_="percent").text.replace('%',''))  # Scrap rating
         data["loaded"] = video.find("div", class_="videoInfo").text  # Scrap loaded
-        data["like"] = video.find("span", class_="votesUp").text  # Scrap like
-        data["accurate_like"] = video.find("span", class_="votesUp")["data-rating"]  # Scrap accurate_like
-        data["dislike"] = video.find("span", class_="votesDown").text  # Scrap dislike
-        data["accurate_dislike"] = video.find("span", class_="votesDown")["data-rating"] # Scrap accurate_dislike
+        data["likes"] = video.find("span", class_="votesUp").text  # Scrap like
+        data["accurate_likes"] = video.find("span", class_="votesUp")["data-rating"]  # Scrap accurate_like
+        data["dislikes"] = video.find("span", class_="votesDown").text  # Scrap dislike
+        data["accurate_dislikes"] = video.find("span", class_="votesDown")["data-rating"] # Scrap accurate_dislike
         data["favorite"] = video.find("span", class_="favoritesCounter").text.strip() # Scrap favorite
 
         # Scrap pornstars
