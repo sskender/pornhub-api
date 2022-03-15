@@ -43,16 +43,16 @@ class Video(object):
             "duration"          : None,     # string
             "loaded"            : None,     # string
             "upload_date"       : None,     # string
-            "likes"              : None,     # string
-            "accurate_likes"     : None,     # integer
-            "dislikes"           : None,     # string
-            "accurate_dislikes"  : None,     # integer
+            "likes"             : None,     # string
+            "accurate_likes"    : None,     # integer
+            "dislikes"          : None,     # string
+            "accurate_dislikes" : None,     # integer
             "favorite"          : None,     # string
             "author"            : None,     # string
             "pornstars"         : None,     # list
             "categories"        : None,     # list
             "tags"              : None,     # list
-            "productions"       : None,     # list
+            "production"        : None,     # string
             "img_url"           : None,     # string
             "embed_url"         : None      # string
         }
@@ -78,6 +78,7 @@ class Video(object):
         data["dislikes"] = video.find("span", class_="votesDown").text  # Scrap dislike
         data["accurate_dislikes"] = video.find("span", class_="votesDown")["data-rating"] # Scrap accurate_dislike
         data["favorite"] = video.find("span", class_="favoritesCounter").text.strip() # Scrap favorite
+        data["production"] = video.find("div", class_="productionWrapper").find_all('a', class_="item")[0].text # Scrap production
 
         # Scrap pornstars
         pornstars = [] 
@@ -96,12 +97,6 @@ class Video(object):
         for tag in video.find("div", class_="tagsWrapper").find_all('a', class_="item"):
             tags.append(tag.text)
         data["tags"] = tags
-
-        # Scrap productions
-        productions = []
-        for prod in video.find("div", class_="productionWrapper").find_all('a', class_="item"):
-            productions.append(prod.text)
-        data["productions"] = productions
 
         return data
 
