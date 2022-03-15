@@ -44,11 +44,32 @@ keywords = ["word1", "word2"]
 client = pornhub.PornHub(keywords)
 
 # if using a proxy
-client = pornhub.PornHub("5.135.164.72", 3128, keywords)
+client = pornhub.PornHub(keywords, "5.135.164.72", 3128)
 # or
 client = pornhub.PornHub(ProxyIP="5.135.164.72", ProxyPort=3128, keywords=["word1", "word2"])
 
 for video in client.getVideos(10,page=2):
+    print(video)
+    print(video["url"])
+```
+
+#### Sort Video by parameter
+
+When keywords are set: "view", "rate", "long", "recent" 
+```python
+keywords = ["word1", "word2"]
+client = pornhub.PornHub(keywords)
+
+for video in client.getVideos(10,page=2, sort_by="long"):
+    print(video)
+    print(video["url"])
+```
+
+When keywords are not set: "view", "rate", "long", "new", "hot"
+```python
+client = pornhub.PornHub()
+
+for video in client.getVideos(10,page=2, sort_by="hot"):
     print(video)
     print(video["url"])
 ```

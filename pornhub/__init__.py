@@ -15,7 +15,7 @@ from .videos import Videos
 from .photos import Photos   
 
 class PornHub(Stars, Videos, Photos):
-    def __init__(self, ProxyIP=None, ProxyPort=None, keywords=[], *args):
+    def __init__(self, keywords=[], ProxyIP=None, ProxyPort=None, *args):
         self.setProxyDictionary(ProxyIP, ProxyPort)
 
         Stars.__init__(self, self.ProxyDictionary, *args)
