@@ -2,7 +2,7 @@
 
 Unofficial API for pornhub.com in Python
 
-*Pull requests are welcome!!!*
+### *Pull requests are welcome!!!*
 
 I find it quite difficult to make time for an active development on this project, so I will be more than happy to merge your pull requests. Thank you all for supporting this project!
 
@@ -25,8 +25,8 @@ client = pornhub.PornHub()
 
 ```python
 import pornhub
+# With proxy, given a Proxy IP and Port. For the countries with restricted access like Turkey, etc.
 client = pornhub.PornHub("5.135.164.72", 3128)
-#With proxy, given a Proxy IP and Port. For the countries with restricted access like Turkey, etc.
 ```
 
 #### Grab stars
@@ -48,28 +48,28 @@ client = pornhub.PornHub(keywords, "5.135.164.72", 3128)
 # or
 client = pornhub.PornHub(ProxyIP="5.135.164.72", ProxyPort=3128, keywords=["word1", "word2"])
 
-for video in client.getVideos(10,page=2):
+for video in client.getVideos(10, page=2):
     print(video)
     print(video["url"])
 ```
 
 #### Sort Video by parameter
 
-When keywords are set: "view", "rate", "long", "recent" 
+When keywords are set: `view`, `rate`, `long`, `recent` 
 ```python
 keywords = ["word1", "word2"]
 client = pornhub.PornHub(keywords)
 
-for video in client.getVideos(10,page=2, sort_by="long"):
+for video in client.getVideos(10, page=2, sort_by="long"):
     print(video)
     print(video["url"])
 ```
 
-When keywords are not set: "view", "rate", "long", "new", "hot"
+When keywords are not set: `view`, `rate`, `long`, `new`, `hot`
 ```python
 client = pornhub.PornHub()
 
-for video in client.getVideos(10,page=2, sort_by="hot"):
+for video in client.getVideos(10, page=2, sort_by="hot"):
     print(video)
     print(video["url"])
 ```
@@ -78,6 +78,7 @@ for video in client.getVideos(10,page=2, sort_by="hot"):
 
 <table>
   <tr>
+    <td align="center"><a href="https://github.com/SashaSZ"><img src="https://avatars.githubusercontent.com/u/88130296?v=4" width="100px;" alt=""/><br /><sub><b>SashaSZ</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/CprogrammerIbrahim"><img src="https://avatars1.githubusercontent.com/u/40497100?s=400&v=4" width="100px;" alt=""/><br /><sub><b>Ibrahim Ipek</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/kittinan"><img src="https://avatars0.githubusercontent.com/u/144775?s=400&v=4" width="100px;" alt=""/><br /><sub><b>Kittinan</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/fantomnotabene"><img src="https://avatars2.githubusercontent.com/u/9576189?s=460&u=7a9639ad287e7070220b22975dbab87b0228611f&v=4" width="100px;" alt=""/><br /><sub><b>Елизаров Роман Русланович</b></sub></a><br /></td>
