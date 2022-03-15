@@ -16,9 +16,9 @@ class Videos(object):
             return sort_dict
         
         if self.keywords:
-            sort_types = {'recent': 'mr', 'view': 'mv', 'rate': 'tr', 'long': 'lg'}
+            sort_types = {"recent": "mr", "view": "mv", "rate": "tr", "long": "lg"}
         else:
-            sort_types = {'view': 'mv', 'rate': 'tr', 'hot':'ht', 'long': 'lg', 'new': 'cm'}
+            sort_types = {"view": "mv", "rate": "tr", "hot":"ht", "long": "lg", "new": "cm"}
         
         for key in sort_types:
             if key in sort_by.lower():
@@ -35,7 +35,7 @@ class Videos(object):
         payload = dict()
 
         if self.keywords:
-            payload["search"] = ''
+            payload["search"] = ""
 
             for item in self.keywords:
                 if (item == "professional") or (item == "pro"):
@@ -51,7 +51,7 @@ class Videos(object):
         for key in video_sort:
             payload[key] = video_sort[key]
         
-        payload['page'] = page_num
+        payload["page"] = page_num
 
         return payload
 
