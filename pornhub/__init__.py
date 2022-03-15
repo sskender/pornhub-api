@@ -12,14 +12,16 @@
 from .core import *
 from .stars import Stars
 from .videos import Videos
-from .photos import Photos   
+from .photos import Photos
+from .video import Video 
 
-class PornHub(Stars, Videos, Photos):
+class PornHub(Stars, Video, Videos, Photos):
     def __init__(self, keywords=[], ProxyIP=None, ProxyPort=None, *args):
         self.setProxyDictionary(ProxyIP, ProxyPort)
 
         Stars.__init__(self, self.ProxyDictionary, *args)
         Videos.__init__(self, self.ProxyDictionary, keywords=keywords, *args)
+        Video.__init__(self, self.ProxyDictionary, *args)
         Photos.__init__(self, self.ProxyDictionary, keywords=keywords, *args)
 
     def setProxyDictionary(self, ProxyIP, ProxyPort):
