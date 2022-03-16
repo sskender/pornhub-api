@@ -76,7 +76,7 @@ for video in client.getVideos(10, page=2, sort_by="hot"):
 
 #### Get more information about the single video
 
-Method **getVideo(url, viewkey)** gives more detail information about a single video
+Method `getVideo(url, viewkey)` gives more detail information about a single video
 
 ```python
 client = pornhub.PornHub()
@@ -93,29 +93,29 @@ print(video["title"])
 ```
 
 The method return a dictionary with keywords:
-1. *"title"* (type: string) - Video title
-2. *"views"* (type: string) - Rounded number of views, for example "2M"
-3. *"accurate_views"* (type: integer) - Full number of views, for example "123456789". When video don't have many views "views"="accurate_views"
-4. *"rating"* (type: integer) - Video rating in percent
-5. *"duration"* (type: string) - Video duration in format "hh:mm:ss"
-6. *"loaded"* (type: string) - When the video was uploaded, for example "2 months ago"
-7. *"upload_date"* (type: string) - Video upload date in format "yyyy-mm-dd"
-8. *"likes"* (type: string) - Similar like *"views"*
-9. *"accurate_likes"* (type: integer) - Similar like *"accurate_views"*
-10. *"dislikes"* (type: string) - Similar like *"views"*
-11. *"accurate_dislikes"* (type: integer) - Similar like *"accurate_views"*
-12. *"favorite"* (type: string) - How many times added to favorites, rounded. For example "2K"
-13. *"author"* (type: string) - Video author (channel)
-14. *"pornstars"* (type: list) - Video stars
-15. *"categories"* (type: list) - Video categories
-16. *"tags"* (type: list) - Video tags
-17. *"production"* (type: string) - Video production (Professional or Homemade)
-18. *"img_url"* (type: string) - URL to Preview Image of Video
-19. *"embed_url"* (type: string) - URL to Video Player
+1. `title` (type: string) - Video title
+2. `views` (type: string) - Rounded number of views, for example "2M"
+3. `accurate_views` (type: integer) - Full number of views, for example "123456789". When video don't have many views "views"="accurate_views"
+4. `rating` (type: integer) - Video rating in percent
+5. `duration` (type: string) - Video duration in format "hh:mm:ss"
+6. `loaded` (type: string) - When the video was uploaded, for example "2 months ago"
+7. `upload_date` (type: string) - Video upload date in format "yyyy-mm-dd"
+8. `likes` (type: string) - Similar like `views`
+9. `accurate_likes` (type: integer) - Similar like `accurate_views`
+10. `dislikes` (type: string) - Similar like `views`
+11. `accurate_dislikes` (type: integer) - Similar like `accurate_views`
+12. `favorite` (type: string) - How many times added to favorites, rounded. For example "2K"
+13. `author` (type: string) - Video author (channel)
+14. `pornstars` (type: list) - Video stars
+15. `categories` (type: list) - Video categories
+16. `tags` (type: list) - Video tags
+17. `production` (type: string) - Video production (Professional or Homemade)
+18. `img_url` (type: string) - URL to Preview Image of Video
+19. `embed_url` (type: string) - URL to Video Player
 
-If the video is not available in your country, in **"title"** will **"Video not available in your country"**, in in others keys will **"None"**
+If the video is not available in your country, in `title` will **"Video not available in your country"**, in in others keys will `None`
 
-**getVideo()** method can be well combined with **getVideos()**
+`getVideo()` method can be well combined with `getVideos()`
 ```python
 keywords = ["word1", "word2"]
 client = pornhub.PornHub(keywords)
