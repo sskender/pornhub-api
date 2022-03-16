@@ -9,7 +9,7 @@ class Videos(object):
         self.keywords = keywords
         self.ProxyDictionary = ProxyDictionary
 
-    def _sortVideo(self, sort_by):
+    def _sortVideos(self, sort_by):
         sort_dict = dict()
 
         if not sort_by:
@@ -27,7 +27,7 @@ class Videos(object):
         
         return sort_dict
 
-    def _craftVideoURL(self, page_num, sort_by):
+    def _craftVideosURL(self, page_num, sort_by):
         # url example:
         # pornhub.com/video/search?search=arg1+arg2
         # pornhub.com/video/search?search=arg1+arg2&p=professional
@@ -47,7 +47,7 @@ class Videos(object):
 
             payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
         
-        video_sort = self._sortVideo(sort_by)
+        video_sort = self._sortVideos(sort_by)
         for key in video_sort:
             payload[key] = video_sort[key]
         
@@ -58,9 +58,9 @@ class Videos(object):
     def _loadVideosPage(self, page_num, sort_by):
         
         if self.keywords:
-            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideoURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
+            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
         else:
-            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideoURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
+            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
 
         html = r.text
         return BeautifulSoup(html, "lxml")
@@ -68,7 +68,7 @@ class Videos(object):
     def _scrapLiVideos(self, soup_data):
         return soup_data.find_all("li", { "class" : re.compile(".*videoblock videoBox.*") } )
 
-    def _scrapVideoInfo(self, div_el):
+    def _scrapVideosInfo(self, div_el):
         data = {
             "name"          : None,     # string
             "url"           : None,     # string
@@ -138,7 +138,7 @@ class Videos(object):
                 if first_four_skip > 0:  # first 4 elements skip , they are not relevant to the query
                     first_four_skip -= 1  # first 4 elements skip , they are not relevant to the query
                 else:
-                    data_dict = self._scrapVideoInfo(possible_video)
+                    data_dict = self._scrapVideosInfo(possible_video)
 
                     if data_dict:
                         yield data_dict

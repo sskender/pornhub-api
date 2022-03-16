@@ -7,7 +7,7 @@ class Video(object):
     def __init__(self, ProxyDictionary, *args):
         self.ProxyDictionary = ProxyDictionary
 
-    def _loadPage(self, url, viewkey):
+    def _loadVideoPage(self, url, viewkey):
 
         if url and isVideo(url):
             r = requests.get(url, headers=HEADERS, proxies=self.ProxyDictionary)
@@ -15,7 +15,7 @@ class Video(object):
             r = requests.get(BASE_URL + VIDEO_URL + viewkey, headers=HEADERS, proxies=self.ProxyDictionary)
         
         html = r.text
-        # print(r.url)
+        
         return BeautifulSoup(html, "lxml")
     
     # Scrap duration, upload_date, author, img_url, embed_url, accurate_views
@@ -33,7 +33,7 @@ class Video(object):
 
         return data
 
-    def _scrapInfo(self, soup_data):
+    def _scrapVideoInfo(self, soup_data):
 
         data = {
             "title"             : None,     # string
@@ -108,7 +108,7 @@ class Video(object):
         :viewkey: viewkey of video
         """
         if url or viewkey:
-            data = self._scrapInfo(self._loadPage(url, viewkey))
+            data = self._scrapVideoInfo(self._loadVideoPage(url, viewkey))
         else:
             return print('URL or Viewkey not entered')
         return data
