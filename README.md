@@ -95,7 +95,7 @@ print(video["title"])
 The method return a dictionary with keywords:
 1. `title` (type: string) - Video title
 2. `views` (type: string) - Rounded number of views, for example "2M"
-3. `accurate_views` (type: integer) - Full number of views, for example "123456789". When video don't have many views "views"="accurate_views"
+3. `accurate_views` (type: integer) - Full number of views, for example "123456789". When video don't have many views `views`=`accurate_views`
 4. `rating` (type: integer) - Video rating in percent
 5. `duration` (type: string) - Video duration in format "hh:mm:ss"
 6. `loaded` (type: string) - When the video was uploaded, for example "2 months ago"
