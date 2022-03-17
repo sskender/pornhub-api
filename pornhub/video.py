@@ -18,7 +18,7 @@ class Video(object):
         
         return BeautifulSoup(html, "lxml")
     
-    # Scrap duration, upload_date, author, img_url, embed_url, accurate_views
+    # Scrap duration, upload_date, author, embed_url, accurate_views
     def _scrapScriptInfo(self, soup_data):
 
         data = dict()
@@ -26,7 +26,6 @@ class Video(object):
 
         data["author"] = script_dict["author"] 
         data["embed_url"] = script_dict['embedUrl']
-        data["img_url"] = script_dict["thumbnailUrl"]
         data["duration"] = ":".join(re.findall(r'\d\d',script_dict['duration']))
         data["upload_date"] = re.findall(r'\d{4}-\d{2}-\d{2}',script_dict['uploadDate'])[0]
         data["accurate_views"] = int(script_dict['interactionStatistic'][0]['userInteractionCount'].replace(',',''))
@@ -53,11 +52,12 @@ class Video(object):
             "categories"        : None,     # list
             "tags"              : None,     # list
             "production"        : None,     # string
+            "url"               : None,     # string
             "img_url"           : None,     # string
             "embed_url"         : None      # string
         }
 
-        # Scrap duration, upload_date, author, img_url, embed_url, accurate_views
+        # Scrap duration, upload_date, author, embed_url, accurate_views
         try:
             script_data = self._scrapScriptInfo(soup_data.find("script", type='application/ld+json').text)
         except:
@@ -67,9 +67,12 @@ class Video(object):
         for key in script_data:
             data[key] = script_data[key]
         
+        data['title'] = soup_data.find("head").find('title').text
+        data['url'] = soup_data.find("head").find('link', rel="canonical")['href']
+        data["img_url"] = soup_data.find("head").find('link', rel="preload")['href']
 
         video = soup_data.find("div", class_='video-wrapper')
-        data['title'] = video.find("span", class_='inlineFree').text
+        
         data['views'] = video.find("span", class_="count").text  # Scrap view
         data['rating'] = int(video.find("span", class_="percent").text.replace('%',''))  # Scrap rating
         data["loaded"] = video.find("div", class_="videoInfo").text  # Scrap loaded
@@ -108,8 +111,6 @@ class Video(object):
         :viewkey: viewkey of video
         """
         if url or viewkey:
-            data = self._scrapVideoInfo(self._loadVideoPage(url, viewkey))
+            return self._scrapVideoInfo(self._loadVideoPage(url, viewkey))
         else:
-            return print('URL or Viewkey not entered')
-        return data
-
+            print('***URL or Viewkey not entered***')
