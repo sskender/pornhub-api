@@ -2,8 +2,9 @@
 
 from .core import *
 import re
+from .video import Video
 
-class Videos(object):
+class Videos(Video):
     
     def __init__(self, ProxyDictionary, keywords=[], *args):
         self.keywords = keywords
@@ -117,13 +118,14 @@ class Videos(object):
         # return
         return data if None not in data.values() else False
 
-    def getVideos(self, quantity = 1, page = 1, sort_by = None, infinity = False):
+    def getVideos(self, quantity = 1, page = 1, sort_by = None, full_data=False, infinity = False):
         """
         Get videos basic informations.
 
         :param quantity: number of videos to return
         :param page: starting page number
         :param sort_by: sort type
+        :param full_data: take full video data
         :param infinity: never stop downloading
         """
 
@@ -141,7 +143,10 @@ class Videos(object):
                     data_dict = self._scrapVideosInfo(possible_video)
 
                     if data_dict:
-                        yield data_dict
+                        if full_data:
+                            yield self.getVideo(data_dict['url'])
+                        else:
+                            yield data_dict
 
                         if not infinity:
                             found += 1
