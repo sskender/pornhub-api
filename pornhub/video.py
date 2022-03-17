@@ -75,7 +75,7 @@ class Video(object):
         
         data['views'] = video.find("span", class_="count").text  # Scrap view
         data['rating'] = int(video.find("span", class_="percent").text.replace('%',''))  # Scrap rating
-        data["loaded"] = video.find("div", class_="videoInfo").text  # Scrap loaded
+        data["loaded"] = video.find("span", class_="white").text  # Scrap loaded
         data["likes"] = video.find("span", class_="votesUp").text  # Scrap like
         data["accurate_likes"] = video.find("span", class_="votesUp")["data-rating"]  # Scrap accurate_like
         data["dislikes"] = video.find("span", class_="votesDown").text  # Scrap dislike
