@@ -74,6 +74,19 @@ for video in client.getVideos(10, page=2, sort_by="hot"):
     print(video["url"])
 ```
 
+#### Take full information about all videos
+Parameter `full_data` allows you to get complete information about the video, but its much more slower due to every page needs to be opened
+
+```python
+keywords = ["word1", "word2"]
+client = pornhub.PornHub(keywords)
+
+for video in client.getVideos(10, page=2, full_data=True):
+  print(video)
+  print(video['upload_date'])
+```
+
+
 #### Get more information about the single video
 
 Method `getVideo(url, viewkey)` gives more detail information about a single video
@@ -110,20 +123,11 @@ The method return a dictionary with keywords:
 15. `categories` (type: list) - Video categories
 16. `tags` (type: list) - Video tags
 17. `production` (type: string) - Video production (Professional or Homemade)
+19. `url` (type: string) - URL to Video
 18. `img_url` (type: string) - URL to Preview Image of Video
 19. `embed_url` (type: string) - URL to Video Player
 
 If the video is not available in your country, in `title` will **"Video not available in your country"**, in in others keys will `None`
-
-`getVideo()` method can be well combined with `getVideos()`
-```python
-keywords = ["word1", "word2"]
-client = pornhub.PornHub(keywords)
-
-for video in client.getVideos(10, page=2, sort_by="hot"):
-  video_data = client.getVideo(video["url"])
-  print(video_data["title"], video_data["views"])
-```
 
 ## Contributors
 
