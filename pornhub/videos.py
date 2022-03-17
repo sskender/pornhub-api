@@ -71,11 +71,11 @@ class Videos(Video):
 
     def _scrapVideosInfo(self, div_el):
         data = {
-            "name"          : None,     # string
+            "title"         : None,     # string
             "url"           : None,     # string
             "rating"        : None,     # integer
             "duration"      : None,     # string
-            "background"    : None      # string
+            "img_url"       : None      # string
         }
 
         # scrap url, name
