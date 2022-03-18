@@ -12,7 +12,7 @@
 from .core import *
 from .stars import Stars
 from .videos import Videos
-from .photos import Photos   
+from .photos import Photos
 
 class PornHub(Stars, Videos, Photos):
     def __init__(self, keywords=[], ProxyIP=None, ProxyPort=None, *args):
