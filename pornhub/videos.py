@@ -75,29 +75,6 @@ class Videos(object):
         
         return BeautifulSoup(html, "lxml")
 
-    """
-    def _loadVideoPage(self, url, viewkey):
-
-        if url and isVideo(url):
-            r = requests.get(url, headers=HEADERS, proxies=self.ProxyDictionary)
-        else:
-            r = requests.get(BASE_URL + VIDEO_URL + viewkey, headers=HEADERS, proxies=self.ProxyDictionary)
-        
-        html = r.text
-        
-        return BeautifulSoup(html, "lxml")
-
-    def _loadVideosPage(self, page_num, sort_by):
-        
-        if self.keywords:
-            r = requests.get(BASE_URL + VIDEOS_URL + SEARCH_URL, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
-        else:
-            r = requests.get(BASE_URL + VIDEOS_URL, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
-
-        html = r.text
-        return BeautifulSoup(html, "lxml")
-    """
-
     def _scrapLiVideos(self, soup_data):
         return soup_data.find_all("li", { "class" : re.compile(".*videoblock videoBox.*") } )
 
