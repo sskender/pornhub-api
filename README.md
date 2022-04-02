@@ -31,8 +31,10 @@ client = pornhub.PornHub("5.135.164.72", 3128)
 
 #### Grab stars
 
+The request can be sorted by: `view`, `trend`, `subs`, `alpha`, `videos`, `random`
+
 ```python
-for star in client.getStars(10):
+for star in client.getStars(10, sort_by="view"):
     print(star)
     print(star["name"])
 ```
@@ -126,7 +128,7 @@ The method return a dictionary with keywords:
 18. `img_url` (type: string) - URL to Preview Image of Video
 19. `embed_url` (type: string) - URL to Video Player
 
-If the video is not available in your country, in `title` will **"Video not available in your country"**, in in others keys will `None`
+If the video is not available in your country, in `title` will **"Video not available in your country"**, in others keys will `None`
 
 ## Contributors
 

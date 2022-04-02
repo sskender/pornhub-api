@@ -18,7 +18,8 @@ SEARCH_URL      = "/search"
 
 PORNSTARS_URL	= "/pornstars"
 PORNSTAR_URL	= "/pornstar/"                                              # for validation
-PORNSTAR_PHOTO	= ".phncdn.com/pics/pornstars/"                # for validation
+MODEL_URL       = "/model/"
+PORNSTAR_PHOTO	= ".phncdn.com/"                                       # for validation
 
 VIDEOS_URL      = "/video"
 VIDEO_URL	= "/view_video.php?viewkey="                                # for validation
@@ -59,7 +60,7 @@ def isStar(url):
     Validate pornstar's page
     www.pornhub.com/pornstar/SOMENAME
     """
-    return True if PORNSTAR_URL in url else False
+    return True if (PORNSTAR_URL in url) or (MODEL_URL in url) else False
 
 def isStarPhoto(url):
     """
