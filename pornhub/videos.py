@@ -1,14 +1,13 @@
 # -*- coding: UTF-8 -*-
 
 from .core import *
-import re
-import json
 
 class Videos(object):
     
-    def __init__(self, ProxyDictionary, keywords=[], *args):
+    def __init__(self, ProxyDictionary, keywords=[], *args, **kwargs):
         self.keywords = keywords
         self.ProxyDictionary = ProxyDictionary
+        self.video_sort = kwargs
 
     def _sortVideos(self, sort_by):
         sort_dict = dict()
@@ -16,19 +15,30 @@ class Videos(object):
         if not sort_by:
             return sort_dict
         
-        if self.keywords:
-            sort_types = {"recent": "mr", "view": "mv", "rate": "tr", "long": "lg"}
-        else:
-            sort_types = {"view": "mv", "rate": "tr", "hot":"ht", "long": "lg", "new": "cm"}
+        sort_keys = sort_by.keys()
+
+        if "sort_by" in sort_keys:
+            if self.keywords:
+                orders = {"recent": "mr", "view": "mv", "rate": "tr", "long": "lg"}
+            else:
+                orders = {"view": "mv", "rate": "tr", "hot":"ht", "long": "lg", "new": "cm"}
+            
+            for key in orders:
+                if key in sort_by["sort_by"].lower():
+                    sort_dict["o"] = orders[key]
         
-        for key in sort_types:
-            if key in sort_by.lower():
-                sort_dict["o"] = sort_types[key]
-                return sort_dict
+        if "period" in sort_keys and ("mv" in sort_dict.values() or "tr" in sort_dict.values()):
+            periods = {"day": "t", "week": "w", "month": "m", "year": "y", "all": "a"}
+            for key in periods:
+                if key in sort_by["period"].lower():
+                    sort_dict["t"] = periods[key]
+        
+        if "region" in sort_keys and ("mv" in sort_dict.values() or "ht" in sort_dict.values()):
+            sort_dict["cc"] = sort_by["region"]
         
         return sort_dict
 
-    def _craftVideosURL(self, page_num, sort_by):
+    def _craftVideosURL(self, page_num):
         # url example:
         # pornhub.com/video/search?search=arg1+arg2
         # pornhub.com/video/search?search=arg1+arg2&p=professional
@@ -48,22 +58,23 @@ class Videos(object):
 
             payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
         
-        video_sort = self._sortVideos(sort_by)
-        for key in video_sort:
-            payload[key] = video_sort[key]
+        if self.video_sort:
+            video_sort = self._sortVideos(self.video_sort)
+            for key in video_sort:
+                payload[key] = video_sort[key]
         
         payload["page"] = page_num
 
         return payload
 
-    def _loadPage(self, page_num=None, sort_by=None, url=None, viewkey=None):
+    def _loadVideoPage(self, page_num=None, url=None, viewkey=None):
         
         # load search page
         if page_num:
             search_url = BASE_URL + VIDEOS_URL
             if self.keywords:
                 search_url += SEARCH_URL
-            r = requests.get(search_url, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
+            r = requests.get(search_url, params=self._craftVideosURL(page_num), headers=HEADERS, proxies=self.ProxyDictionary)
         
         # load video page
         else:
@@ -73,7 +84,6 @@ class Videos(object):
                 r = requests.get(BASE_URL + VIDEO_URL + viewkey, headers=HEADERS, proxies=self.ProxyDictionary)
         
         html = r.text
-        
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiVideos(self, soup_data):
@@ -83,9 +93,10 @@ class Videos(object):
         data = {
             "title"         : None,     # string
             "url"           : None,     # string
+            "embed"         : None,     # string
             "rating"        : None,     # integer
             "duration"      : None,     # string
-            "img_url"       : None      # string
+            "img"           : None      # string
         }
 
         # scrap url, name
@@ -94,6 +105,7 @@ class Videos(object):
                 url = a_tag.attrs["href"]
                 if isVideo(url):
                     data["url"] = BASE_URL + url
+                    data["embed"] = EMBED_URL + re.findall(r"viewkey=(\S+)", url)[0]
                     data["title"] = a_tag.attrs["title"]
                     break
             except Exception as e:
@@ -104,7 +116,7 @@ class Videos(object):
             try:
                 url = img_tag.attrs["data-thumb_url"]
                 if isVideoPhoto(url):
-                    data["img_url"] = url
+                    data["img"] = url
                     break
             except Exception as e:
                 pass
@@ -128,18 +140,13 @@ class Videos(object):
         # return
         return data if None not in data.values() else False
 
-    # Scrap duration, upload_date, author, embed_url, accurate_views
+    # Scrap upload_date, author, accurate_views
     def _scrapScriptInfo(self, soup_data):
-
         data = dict()
-        script_dict = json.loads(soup_data.replace("'",'"'))
-
+        script_dict = json.loads(soup_data)
         data["author"] = script_dict["author"] 
-        data["embed_url"] = script_dict["embedUrl"]
-        data["duration"] = ":".join(re.findall(r"\d\d",script_dict["duration"]))
         data["upload_date"] = re.findall(r"\d{4}-\d{2}-\d{2}",script_dict["uploadDate"])[0]
         data["accurate_views"] = int(script_dict["interactionStatistic"][0]["userInteractionCount"].replace(",",""))
-
         return data
 
     def _scrapVideoInfo(self, soup_data):
@@ -163,57 +170,62 @@ class Videos(object):
             "tags"              : None,     # list
             "production"        : None,     # string
             "url"               : None,     # string
-            "img_url"           : None,     # string
-            "embed_url"         : None      # string
+            "img"               : None,     # string
+            "embed"             : None,     # string
+            "geo_block"         : False     # bool
         }
 
-        # Scrap duration, upload_date, author, embed_url, accurate_views
-        try:
-            script_data = self._scrapScriptInfo(soup_data.find("script", type="application/ld+json").text)
-        except:
-            data["title"] = "***Video not available in your country***"
-            return data
+        url = soup_data.find("head").find("link", {"rel": "canonical"}).attrs["href"]
+        data["url"] = url
+        data["embed"] = EMBED_URL + re.findall(r"viewkey=(\S+)", url)[0]
 
-        for key in script_data:
-            data[key] = script_data[key]
+        if soup_data.find("div", {"class" : "geoBlocked"}):
+            data["geo_block"] = True
+            return data
         
         data["title"] = soup_data.find("head").find("title").text
-        data["url"] = soup_data.find("head").find("link", rel="canonical")["href"]
-        data["img_url"] = soup_data.find("head").find("link", rel="preload")["href"]
+        data["img"] = soup_data.find("head").find("link", {"rel": "preload"}).attrs["href"]
 
-        video = soup_data.find("div", class_="video-wrapper")
-        
-        data["views"] = video.find("span", class_="count").text  # Scrap view
-        data["rating"] = int(video.find("span", class_="percent").text.replace("%",""))  # Scrap rating
-        data["loaded"] = video.find("span", class_="white").text  # Scrap loaded
-        data["likes"] = video.find("span", class_="votesUp").text  # Scrap like
-        data["accurate_likes"] = video.find("span", class_="votesUp")["data-rating"]  # Scrap accurate_like
-        data["dislikes"] = video.find("span", class_="votesDown").text  # Scrap dislike
-        data["accurate_dislikes"] = video.find("span", class_="votesDown")["data-rating"] # Scrap accurate_dislike
-        data["favorite"] = video.find("span", class_="favoritesCounter").text.strip() # Scrap favorite
-        data["production"] = video.find("div", class_="productionWrapper").find_all("a", class_="item")[0].text # Scrap production
+        duration = int(soup_data.find("head").find("meta", {"property": "video:duration"}).attrs["content"])
+        data["duration"] = str(datetime.timedelta(seconds=duration))
+
+        # Scrap upload_date, author, accurate_views
+        try:
+            script_data = self._scrapScriptInfo(soup_data.find("script", {"type": "application/ld+json"}).text)
+            for key in script_data:
+                data[key] = script_data[key]
+        except Exception as e:
+            pass
+
+        video = soup_data.find("div", {"class": "video-wrapper"})    
+        data["views"] = video.find("span", {"class": "count"}).text  # Scrap view
+        data["rating"] = int(video.find("span", {"class": "percent"}).text.replace("%",""))  # Scrap rating
+        data["loaded"] = video.find("span", {"class": "white"}).text  # Scrap loaded
+        data["likes"] = video.find("span", {"class": "votesUp"}).text  # Scrap like
+        data["accurate_likes"] = video.find("span", {"class": "votesUp"})["data-rating"]  # Scrap accurate_like
+        data["dislikes"] = video.find("span", {"class": "votesDown"}).text  # Scrap dislike
+        data["accurate_dislikes"] = video.find("span", {"class": "votesDown"}).attrs["data-rating"] # Scrap accurate_dislike
+        data["favorite"] = video.find("span", {"class": "favoritesCounter"}).text.strip() # Scrap favorite
+        data["production"] = video.find("div", {"class": "productionWrapper"}).find_all("a", {"class": "item"})[0].text # Scrap production
 
         # Scrap pornstars
-        pornstars = [] 
-        for star in video.find_all("a", class_="pstar-list-btn"):
-            pornstars.append(star.text.strip())
-        data["pornstars"] = pornstars
+        data["pornstars"] = list()
+        for star in video.find_all("a", {"class": "pstar-list-btn"}):
+            data["pornstars"].append(star.text.strip())
         
         # Scrap categories
-        categories = []
-        for category in video.find("div", class_="categoriesWrapper").find_all("a", class_="item"):
-            categories.append(category.text)
-        data["categories"] = categories
+        data["categories"]= list()
+        for category in video.find("div", {"class": "categoriesWrapper"}).find_all("a", {"class": "item"}):
+            data["categories"].append(category.text)
 
         # Scrap tags
-        tags = []
-        for tag in video.find("div", class_="tagsWrapper").find_all("a", class_="item"):
-            tags.append(tag.text)
-        data["tags"] = tags
+        data["tags"] = list()
+        for tag in video.find("div", {"class":"tagsWrapper"}).find_all("a", {"class": "item"}):
+            data["tags"].append(tag.text)
 
         return data
 
-    def getVideo(self, url=None, viewkey=None, *args):
+    def getVideo(self, url=None, viewkey=None):
         """
         Get video informations.
         You can enter the full video url or just the viewkey
@@ -221,27 +233,28 @@ class Videos(object):
         :viewkey: viewkey of video
         """
         if url or viewkey:
-            return self._scrapVideoInfo(self._loadPage(url=url, viewkey=viewkey))
+            return self._scrapVideoInfo(self._loadVideoPage(url=url, viewkey=viewkey))
         else:
-            print("***URL or Viewkey not entered***")
+            raise ValueError("URL or Viewkey not entered")
 
-    def getVideos(self, quantity = 1, page = 1, sort_by = None, full_data=False, infinity = False):
+    def getVideos(self, quantity = 1, page = 1, full_data=False, infinity = False, **sort_dict):
         """
         Get videos basic informations.
 
         :param quantity: number of videos to return
         :param page: starting page number
-        :param sort_by: sort type
         :param full_data: take full video data
         :param infinity: never stop downloading
         """
-
         quantity = quantity if quantity >= 1 else 1
         page = page if page >= 1 else 1
         found = 0
 
-        while True:   
-            for possible_video in self._scrapLiVideos(self._loadPage(page_num=page, sort_by=sort_by)):
+        if sort_dict:
+            self.video_sort.update(sort_dict)
+
+        while True:
+            for possible_video in self._scrapLiVideos(self._loadVideoPage(page_num=page)):
                 data_dict = self._scrapVideosInfo(possible_video)
 
                 if data_dict:
