@@ -47,8 +47,8 @@ class Videos(object):
 
         if self.keywords:
             payload["search"] = ""
-
             for item in self.keywords:
+                item = re.sub(r"[^\w\s]", "", item).replace("_", " ")
                 if (item == "professional") or (item == "pro"):
                     payload["p"] = "professional"
                 elif (item == "homemade") or (item == "home"):
@@ -57,7 +57,7 @@ class Videos(object):
                     payload["search"] += (item + " ")
 
             payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
-        
+                
         if self.video_sort:
             video_sort = self._sortVideos(self.video_sort)
             for key in video_sort:
@@ -87,7 +87,12 @@ class Videos(object):
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiVideos(self, soup_data):
-        return soup_data.find("div", class_="sectionWrapper").find_all("li", { "class" : re.compile(".*videoblock videoBox.*") } )
+        section_wrappers = soup_data.findAll("div", class_="sectionWrapper")
+        for wrapper in section_wrappers:
+            LiVideos = wrapper.find_all("li", {"class": re.compile(".*videoblock videoBox.*")})
+            if LiVideos != []:
+                return LiVideos
+        raise Exception("LiVideos Not Found")
 
     def _scrapVideosInfo(self, div_el):
         data = {
@@ -190,12 +195,9 @@ class Videos(object):
         data["duration"] = str(datetime.timedelta(seconds=duration))
 
         # Scrap upload_date, author, accurate_views
-        try:
-            script_data = self._scrapScriptInfo(soup_data.find("script", {"type": "application/ld+json"}).text)
-            for key in script_data:
-                data[key] = script_data[key]
-        except Exception as e:
-            pass
+        script_data = self._scrapScriptInfo(re.findall('<script type="application/ld\+json">([\s\S]+?)</script>', str(soup_data))[0])
+        for key in script_data:
+            data[key] = script_data[key]
 
         video = soup_data.find("div", {"class": "video-wrapper"})    
         data["views"] = video.find("span", {"class": "count"}).text  # Scrap view

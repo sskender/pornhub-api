@@ -33,6 +33,7 @@ class Gifs(object):
         if self.keywords:
             search = ""
             for item in self.keywords:
+                item = re.sub(r"[^\w\s]", "", item).replace("_", " ")
                 search += " " + item
             payload["search"] = search.strip()
 
@@ -60,12 +61,18 @@ class Gifs(object):
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiGifs(self, soup_data):
-        return soup_data.find_all("div", {"class" : "gifsWrapper"})[-1].find_all("li", {"class" : "gifVideoBlock js-gifVideoBlock"})
+        section_wrappers = soup_data.findAll("div", class_="sectionWrapper")
+        for wrapper in section_wrappers:
+            LiGifs = wrapper.find_all("li", {"class": re.compile(".*gifVideoBlock js-gifVideoBlock.*")})
+            if LiGifs != []:
+                return LiGifs
+        raise Exception("LiGifs Not Found")
 
     def _scrapGifsInfo(self, div_el):
         data = {
                 "title"         : None,     # string
                 "url"           : None,     # string
+                "embed"         : None,     # string
                 "img"           : None,     # string
                 "gif"           : None,     # string
                 "mp4"           : None,     # string
@@ -75,6 +82,7 @@ class Gifs(object):
         url = a_el["href"]
         data["title"] = a_el.span.text.strip()
         data["url"] = BASE_URL + url
+        data["embed"] = data["url"].replace("gif", "embedgif")
         data["img"] = a_el.video["data-poster"]
         data["gif"] = GIF_DATA_URL + url + ".gif"
         data["mp4"] = a_el.video["data-mp4"]
