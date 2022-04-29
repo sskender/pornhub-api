@@ -2,7 +2,7 @@ import pornhub
 
 search_keywords = []
 
-#client = pornhub.PornHub("5.135.164.72", 3128, search_keywords)
+#client = pornhub.PornHub(search_keywords, "5.135.164.72", 3128)
 #With proxy, given a Proxy IP and Port. For the countries with restricted access like Turkey, etc.
 
 client = pornhub.PornHub(search_keywords)
@@ -13,10 +13,11 @@ for star in client.getStars(10):
     
 for video in client.getVideos(10,page=2):
     print(video)
+    print(video["title"])
+
+for gif in client.getGifs(10,page=2):
+    print(gif)
+    print(gif["mp4"])
 
 for photo_url in client.getPhotos(5):
     print(photo_url)
-
-video = client.getVideo("SOME VIDEO URL")
-print(video)
-print(video['accurate_views'])
