@@ -5,7 +5,7 @@ import re
 import json
 
 class Videos(object):
-    
+
     def __init__(self, ProxyDictionary, keywords=[], *args):
         self.keywords = keywords
         self.ProxyDictionary = ProxyDictionary
@@ -15,17 +15,17 @@ class Videos(object):
 
         if not sort_by:
             return sort_dict
-        
+
         if self.keywords:
             sort_types = {"recent": "mr", "view": "mv", "rate": "tr", "long": "lg"}
         else:
             sort_types = {"view": "mv", "rate": "tr", "hot":"ht", "long": "lg", "new": "cm"}
-        
+
         for key in sort_types:
             if key in sort_by.lower():
                 sort_dict["o"] = sort_types[key]
                 return sort_dict
-        
+
         return sort_dict
 
     def _craftVideosURL(self, page_num, sort_by):
@@ -47,33 +47,33 @@ class Videos(object):
                     payload["search"] += (item + " ")
 
             payload["search"] = payload["search"].strip() # removing the last space, otherwise it will always be 1 page
-        
+
         video_sort = self._sortVideos(sort_by)
         for key in video_sort:
             payload[key] = video_sort[key]
-        
+
         payload["page"] = page_num
 
         return payload
 
     def _loadPage(self, page_num=None, sort_by=None, url=None, viewkey=None):
-        
+
         # load search page
         if page_num:
             search_url = BASE_URL + VIDEOS_URL
             if self.keywords:
                 search_url += SEARCH_URL
             r = requests.get(search_url, params=self._craftVideosURL(page_num, sort_by), headers=HEADERS, proxies=self.ProxyDictionary)
-        
+
         # load video page
         else:
             if url and isVideo(url):
                 r = requests.get(url, headers=HEADERS, proxies=self.ProxyDictionary)
             else:
                 r = requests.get(BASE_URL + VIDEO_URL + viewkey, headers=HEADERS, proxies=self.ProxyDictionary)
-        
+
         html = r.text
-        
+
         return BeautifulSoup(html, "lxml")
 
     def _scrapLiVideos(self, soup_data):
@@ -102,7 +102,7 @@ class Videos(object):
         # scrap background photo url
         for img_tag in div_el.find_all("img", src=True):
             try:
-                url = img_tag.attrs["data-thumb_url"]
+                url = img_tag.attrs["data-mediumthumb"]
                 if isVideoPhoto(url):
                     data["img_url"] = url
                     break
@@ -134,7 +134,7 @@ class Videos(object):
         data = dict()
         script_dict = json.loads(soup_data.replace("'",'"'))
 
-        data["author"] = script_dict["author"] 
+        data["author"] = script_dict["author"]
         data["embed_url"] = script_dict["embedUrl"]
         data["duration"] = ":".join(re.findall(r"\d\d",script_dict["duration"]))
         data["upload_date"] = re.findall(r"\d{4}-\d{2}-\d{2}",script_dict["uploadDate"])[0]
@@ -176,13 +176,13 @@ class Videos(object):
 
         for key in script_data:
             data[key] = script_data[key]
-        
+
         data["title"] = soup_data.find("head").find("title").text
         data["url"] = soup_data.find("head").find("link", rel="canonical")["href"]
         data["img_url"] = soup_data.find("head").find("link", rel="preload")["href"]
 
         video = soup_data.find("div", class_="video-wrapper")
-        
+
         data["views"] = video.find("span", class_="count").text  # Scrap view
         data["rating"] = int(video.find("span", class_="percent").text.replace("%",""))  # Scrap rating
         data["loaded"] = video.find("span", class_="white").text  # Scrap loaded
@@ -194,11 +194,11 @@ class Videos(object):
         data["production"] = video.find("div", class_="productionWrapper").find_all("a", class_="item")[0].text # Scrap production
 
         # Scrap pornstars
-        pornstars = [] 
+        pornstars = []
         for star in video.find_all("a", class_="pstar-list-btn"):
             pornstars.append(star.text.strip())
         data["pornstars"] = pornstars
-        
+
         # Scrap categories
         categories = []
         for category in video.find("div", class_="categoriesWrapper").find_all("a", class_="item"):
@@ -240,7 +240,7 @@ class Videos(object):
         page = page if page >= 1 else 1
         found = 0
 
-        while True:   
+        while True:
             for possible_video in self._scrapLiVideos(self._loadPage(page_num=page, sort_by=sort_by)):
                 data_dict = self._scrapVideosInfo(possible_video)
 
